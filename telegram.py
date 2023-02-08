@@ -38,6 +38,10 @@ def send_merged_to_telegram(BOT_TOKEN, channel_id):
 
     if merged_text:
         send_to_telegram(merged_text, BOT_TOKEN, channel_id)
+        with open("tvshows.txt", "w") as file:
+            file.write("")
+        with open("movies.txt", "w") as file:
+            file.write("")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

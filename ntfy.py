@@ -33,6 +33,10 @@ def send_merged_to_ntfy(url, authorization):
 
     if merged_text:
         send_to_ntfy(url, merged_text, authorization)
+        with open("tvshows.txt", "w") as file:
+            file.write("")
+        with open("movies.txt", "w") as file:
+            file.write("")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
