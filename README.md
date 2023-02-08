@@ -15,3 +15,8 @@ Template
 {{/if_equals}}
 }
 ```
+
+Note: `develop` branch even though it truncates the episodes for tv series, it will break once a movie gets added.
+
+TODO:
+- Fix movie support where webhook server does not crash trying to send notifications following a movie notification
