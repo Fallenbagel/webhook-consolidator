@@ -19,7 +19,8 @@ def webhook():
             existing_contents = file.read()
     except FileNotFoundError:
         existing_contents = ""
-
+    
+    # Comment to indicate that episodes are now truncated like S01E01 - S01E10 as I forgot to add to commit message
     existing_titles = existing_contents.split("\n\n")
     existing_titles = [x for x in existing_titles if x]
     existing_titles = [[x.split("\n")[0], *x.split("\n")[1:]] for x in existing_titles]
