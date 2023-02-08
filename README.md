@@ -4,7 +4,7 @@ This is a python script that acts as a middle man to consolidate/accumulate & me
 ### Preview
 **Telegram**
 
-![image](https://user-images.githubusercontent.com/98979876/217662185-76a728bb-979e-42dc-a62e-03ba4cdb5a0a.png)
+![image](https://user-images.githubusercontent.com/98979876/217665893-a601345f-3d0f-4007-9a81-6094049b7b02.png)
 
 ## How to set it up
 ### Pre-requisites:
