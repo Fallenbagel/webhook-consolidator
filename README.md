@@ -20,3 +20,4 @@ Note: `develop` branch even though it truncates the episodes for tv series, it w
 
 TODO:
 - Fix movie support where webhook server does not crash trying to send notifications following a movie notification
+- Add more notification agents
