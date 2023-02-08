@@ -3,64 +3,61 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+# Define your webhook url here i.e. ntfy
+webhook_url = "<YOUR_WEBHOOK_URL>"
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    # Get the JSON data from the request
     json_data = request.get_json()
     title = json_data.get("title")
-    episode = json_data.get("episodes")
-    if episode:
-      season = episode.split("E")[0]
-      episode_number = int(episode.split("E")[1])
-    else:
-      movie = json_data.get("movies")
-      
+    episode = json_data.get("episode")
+    movie = json_data.get("movie")
+
+    # Read the existing contents of the file "output.txt"
     try:
         with open("output.txt", "r") as file:
             existing_contents = file.read()
     except FileNotFoundError:
         existing_contents = ""
-    
-    # Comment to indicate that episodes are now truncated like S01E01 - S01E10 as I forgot to add to commit message
-    existing_titles = existing_contents.split("\n\n")
-    existing_titles = [x for x in existing_titles if x]
-    existing_titles = [[x.split("\n")[0], *x.split("\n")[1:]] for x in existing_titles]
-    existing_titles = {x[0]: {y.split("-")[0].split("E")[0]: {'start': int(y.split("-")[0].split("E")[1]), 'end': int(y.split("-")[1].split("E")[1])} for y in x[1:]} for x in existing_titles}
 
+    # Split the existing contents into separate titles
+    existing_titles = existing_contents.strip().split("\n\n")
+    existing_titles = [x.split("\n") for x in existing_titles]
+    existing_titles = {x[0]: x[1:] for x in existing_titles}
+
+    # If the title is already in the existing titles, update the data
     if title in existing_titles:
-        content = existing_titles[title]
-        if "movies" in content:
-            existing_titles[title] = {}
+        if movie:
+            existing_titles[title] = [movie]
         else:
-            season = episode.split("E")[0]
-            episode_number = int(episode.split("E")[1])
-        if season not in existing_titles[title]:
-            existing_titles[title][season] = {'start': episode_number, 'end': episode_number}
-        else:
-            existing_start = existing_titles[title][season]['start']
-            existing_end = existing_titles[title][season]['end']
-            existing_titles[title][season]['start'] = min(existing_start, episode_number)
-            existing_titles[title][season]['end'] = max(existing_end, episode_number)
+            season, episode_number = episode.split("E")[0], int(episode.split("E")[1])
+            existing_episodes = existing_titles[title]
+            existing_episodes = [x.split("-") for x in existing_episodes]
+            existing_episodes = [(int(x.split("E")[1]), int(y.split("E")[1])) for x, y in existing_episodes]
+            found = False
+            for start, end in existing_episodes:
+                if start <= episode_number <= end:
+                    found = True
+                    break
+            if not found:
+                existing_titles[title].append(f"{season}E{str(episode_number).zfill(2)} - {season}E{str(episode_number).zfill(2)}")
+    # If the title is not in the existing titles, add it
     else:
-        existing_titles[title] = {}
-        if episode is None:
-            existing_titles[title]["movies"] = json_data.get("movies")
+        if movie:
+            existing_titles[title] = [movie]
         else:
-            season = episode.split("E")[0]
-            episode_number = int(episode.split("E")[1])
-            existing_titles[title][season] = {'start': episode_number, 'end': episode_number}
+            season, episode_number = episode.split("E")[0], int(episode.split("E")[1])
+            existing_titles[title] = [f"{season}E{str(episode_number).zfill(2)} - {season}E{str(episode_number).zfill(2)}"]
 
-
+    # Write the updated contents to the file "output.txt"
     with open("output.txt", "w") as file:
         for title, content in existing_titles.items():
             file.write(f"{title}\n")
-            if "movies" in content:
-                file.write(f"{content['movies']}\n\n")
-            else:
-                for season, episodes in content.items():
-                    file.write(f"{season}E{str(episodes['start']).zfill(2)} - {season}E{str(episodes['end']).zfill(2)}\n")
-                file.write("\n")
+            file.write("\n".join(content))
+            file.write("\n\n")
+
+    # Send the webhook to the server
+    requests.post(webhook_url, json=json_data)
 
     return "OK"
-
-if __name__ == "__main__":
-    app.run()
