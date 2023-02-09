@@ -2,13 +2,13 @@
 This is a python script that acts as a middle man to consolidate/accumulate & merge and sort notifications sent by the jellyfin-webhook-plugin so that all of them are sent as a single message after accumulating for a set period of time. It also truncates the added episodes depending on the seasons starting from the lowest episode to highest. As for movie notifications, it sends the overview with it. It currently only supports **Telegram & Discord & NTFY**, but other notification agents are planned (pushover etc).
 
 ### Preview
+**Discord**
+
+![image](https://user-images.githubusercontent.com/98979876/217692473-f0158579-90a2-48e9-b6e3-92fb537384ea.png)
+
 **Telegram**
 
 ![image](https://user-images.githubusercontent.com/98979876/217665893-a601345f-3d0f-4007-9a81-6094049b7b02.png)
-
-**Discord**
-
-![image](https://user-images.githubusercontent.com/98979876/217688395-6b7371d5-e6f9-484d-89a2-adb6ba2d1d92.png)
 
 ## How to set it up
 ### Pre-requisites:
@@ -62,6 +62,7 @@ http://127.0.0.1:5000/webhook
 }
 ```
 #### Discord
+```
 {
 {{#if_equals ItemType 'Episode'}}
   "title": "*({{ItemType}})* **{{{SeriesName}}} ({{Year}})**",
