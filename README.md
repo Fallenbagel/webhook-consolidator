@@ -24,9 +24,13 @@ cd webhook-consolidator
 ```
 pip install -r requirements.txt
 ```
-3. Run the script `main.py`. This is the webhook server. This can be done in screen or tmux, or run detached, or as a systemd service (WIP)
+3. Run the script `main.py`. This is the webhook server. This can be done in screen or tmux, or run detached, or as a systemd service (WIP) or use `&` to run detached
 ```
 python main.py
+```
+or to run detached
+```
+python main.py & 
 ```
 4. Run the notification agent and pass in the required arguments
 __telegram__
