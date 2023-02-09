@@ -15,7 +15,15 @@ def send_to_discord(text, BOT_TOKEN, channel_id):
         "Content-Type": "application/json",
     }
     data = {
-        "content": text
+        "content": "",
+        "embed": {
+            "title": "Items added since last checked",
+            "description": text,
+            "color": 0x36393F,
+            #"footer": {
+            #    "text": "View [Jellyfin](https://example.com)"
+            #}
+            }
     }
     response = requests.post(
         f'https://discordapp.com/api/v6/channels/{channel_id}/messages',
@@ -32,7 +40,7 @@ def send_merged_to_discord(BOT_TOKEN, channel_id):
     with open('tvshows.txt', 'r') as file:
         tvshows = file.read()
         if tvshows:
-            merged_text += tvshows
+            merged_text += tvshows + "\n"
         file.close()
 
     with open('movies.txt', 'r') as file:
