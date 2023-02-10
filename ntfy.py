@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", help="ntfy URL", required=True)
     parser.add_argument("--authorization", help="[Optional] Authorization header in Base64", required=False)
-    parser.add_argument("--schedule", help="The schedule for sending messages in seconds or hours, ex: 5s or 1hr", required=True)
+    parser.add_argument("--schedule", help="The schedule for sending messages in seconds, minutes, or hours, ex: 5s / 10m / 1h", required=True)
     args = parser.parse_args()
     # Extract the number and unit from the schedule argument
     schedule_number = int(args.schedule[:-1])
@@ -62,8 +62,10 @@ if __name__ == "__main__":
         schedule.every(schedule_number).seconds.do(send_merged_to_ntfy, args.url, args.authorization)
     elif schedule_unit == 'h':
         schedule.every(schedule_number).hours.do(send_merged_to_ntfy, args.url, args.authorization)
+    elif schedule_unit == 'm':
+        schedule.every(schedule_number).minutes.do(send_merged_to_ntfy, args.url, args.authorization)
     else:
-        raise Exception('Invalid schedule unit, should be either "s" for seconds or "h" for hours')
+        raise Exception('Invalid schedule unit, should be either "s" for seconds, "m" for minutes, or "h" for hours')
 
     while True:
         schedule.run_pending()
