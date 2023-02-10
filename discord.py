@@ -6,6 +6,25 @@ def make_files(path):
     except IOError:
         filepath = open(path, 'w+') 
 
+def replace_same_lines(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []
+    for line in lines:
+        line = line.strip()
+        parts = line.split(' - ')
+        if len(parts) == 2:
+            if parts[0] == parts[1]:
+                new_lines.append(parts[0] + '\n')
+            else:
+                new_lines.append(line + '\n')
+        else:
+            new_lines.append(line + '\n')
+
+    with open(filename, 'w') as file:
+        file.writelines(new_lines)
+
 def send_to_discord(text, BOT_TOKEN, channel_id):
     # Replace BOT_TOKEN with your bot's token
     bot_token = BOT_TOKEN
@@ -41,6 +60,7 @@ def send_to_discord(text, BOT_TOKEN, channel_id):
 def send_merged_to_discord(BOT_TOKEN, channel_id):
     merged_text = ""
     make_files('tvshows.txt')
+    replace_same_lines('tvshows.txt')
     with open('tvshows.txt', 'r') as file:
         tvshows = file.read()
         if tvshows:

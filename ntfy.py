@@ -4,7 +4,26 @@ def make_files(path):
     try:
         filepath = open(path, 'r')
     except IOError:
-        filepath = open(path, 'w+')    
+        filepath = open(path, 'w+')
+
+def replace_same_lines(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []
+    for line in lines:
+        line = line.strip()
+        parts = line.split(' - ')
+        if len(parts) == 2:
+            if parts[0] == parts[1]:
+                new_lines.append(parts[0] + '\n')
+            else:
+                new_lines.append(line + '\n')
+        else:
+            new_lines.append(line + '\n')
+
+    with open(filename, 'w') as file:
+        file.writelines(new_lines) 
 
 def send_to_ntfy(url, text, authorization):
     response = requests.post(
@@ -24,6 +43,7 @@ def send_to_ntfy(url, text, authorization):
 def send_merged_to_ntfy(url, authorization):
     merged_text = ""
     make_files('tvshows.txt')
+    replace_same_lines('tvshows.txt')
     with open('tvshows.txt', 'r') as file:
         tvshows = file.read()
         if tvshows:
