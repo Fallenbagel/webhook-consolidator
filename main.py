@@ -68,5 +68,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Serves a webook listener on all interfaces on a given port, to sort the input and forward onto a given notification agent.')
     parser.add_argument("-p", "--port", help="Defines the port to bind to.")
     args = parser.parse_args()
-    print("Server will run on all interfaces on port:" + args.port + " at location /webhook")
-    serve(app, host='0.0.0.0', port=args.port)
+    if args.port is None:
+        port=5000
+    else:
+        port=args.port
+    print("Server will run on all interfaces on port:" + port + " at location /webhook")
+    serve(app, host='0.0.0.0', port=port)
