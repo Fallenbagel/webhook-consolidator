@@ -1,9 +1,17 @@
-import requests
+import requests, argparse
 from flask import Flask, request
+from waitress import serve
 
 app = Flask(__name__)
 
 @app.route("/webhook", methods=["POST"])
+
+def make_files(path):
+    try:
+        filepath = open(path, 'r')
+    except IOError:
+        filepath = open(path, 'w+')    
+
 def webhook():
     json_data = request.get_json()
     title = json_data.get("title")
@@ -13,6 +21,7 @@ def webhook():
     if episode:
         season = episode.split("E")[0]
         episode_number = int(episode.split("E")[1])
+        make_files('tvshows.txt')
         try:
             with open("tvshows.txt", "r") as file:
                 existing_contents = file.read()
@@ -44,6 +53,7 @@ def webhook():
                 file.write("\n")
     
     elif movie:
+        make_files('movies.txt')
         try:
             with open("movies.txt", "a") as file:
                 file.write(f"{title}\n{movie}\n\n")
@@ -54,4 +64,13 @@ def webhook():
     return "OK"
 
 if __name__ == "__main__":
-    app.run()
+    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Serves a webook listener on all interfaces on a given port, to sort the input and forward onto a given notification agent.')
+    parser.add_argument("-p", "--port", help="Defines the port to bind to.")
+    args = parser.parse_args()
+    if args.port is None:
+        port=5000
+    else:
+        port=args.port
+    print("Server will run on all interfaces on port:", port, " at location /webhook")
+    serve(app, host='0.0.0.0', port=port)

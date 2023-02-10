@@ -1,7 +1,29 @@
-import requests
-import schedule
-import time
-import argparse
+import requests, schedule, time, argparse
+
+def make_files(path):
+    try:
+        filepath = open(path, 'r')
+    except IOError:
+        filepath = open(path, 'w+')
+
+def replace_same_lines(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []
+    for line in lines:
+        line = line.strip()
+        parts = line.split(' - ')
+        if len(parts) == 2:
+            if parts[0] == parts[1]:
+                new_lines.append(parts[0] + '\n')
+            else:
+                new_lines.append(line + '\n')
+        else:
+            new_lines.append(line + '\n')
+
+    with open(filename, 'w') as file:
+        file.writelines(new_lines) 
 
 def send_to_ntfy(url, text, authorization):
     response = requests.post(
@@ -10,6 +32,7 @@ def send_to_ntfy(url, text, authorization):
         headers={
             "Title": "Items added in the past hour",
             "Authorization": authorization,
+            "Tags": "tv",
         }
     )
     if response.status_code != 200:
@@ -19,12 +42,15 @@ def send_to_ntfy(url, text, authorization):
 
 def send_merged_to_ntfy(url, authorization):
     merged_text = ""
+    make_files('tvshows.txt')
+    replace_same_lines('tvshows.txt')
     with open('tvshows.txt', 'r') as file:
         tvshows = file.read()
         if tvshows:
             merged_text += tvshows
         file.close()
 
+    make_files('movies.txt')
     with open('movies.txt', 'r') as file:
         movies = file.read()
         if movies:
@@ -42,7 +68,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", help="ntfy URL", required=True)
     parser.add_argument("--authorization", help="[Optional] Authorization header in Base64", required=False)
-    parser.add_argument("--schedule", help="The schedule for sending messages in seconds or hours, ex: 5s or 1hr", required=True)
+    parser.add_argument("--schedule", help="The schedule for sending messages in seconds, minutes, or hours, ex: 5s / 10m / 1h", required=True)
     args = parser.parse_args()
     # Extract the number and unit from the schedule argument
     schedule_number = int(args.schedule[:-1])
@@ -51,10 +77,12 @@ if __name__ == "__main__":
     # Schedule the send_merged_to_ntfy function
     if schedule_unit == 's':
         schedule.every(schedule_number).seconds.do(send_merged_to_ntfy, args.url, args.authorization)
+    elif schedule_unit == 'm':
+        schedule.every(schedule_number).minutes.do(send_merged_to_ntfy, args.url, args.authorization)
     elif schedule_unit == 'h':
         schedule.every(schedule_number).hours.do(send_merged_to_ntfy, args.url, args.authorization)
     else:
-        raise Exception('Invalid schedule unit, should be either "s" for seconds or "h" for hours')
+        raise Exception('Invalid schedule unit, should be either "s" for seconds, "m" for minutes, or "h" for hours')
 
     while True:
         schedule.run_pending()
