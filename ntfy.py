@@ -3,6 +3,12 @@ import schedule
 import time
 import argparse
 
+def make_files(path):
+    try:
+        filepath = open(path, 'r')
+    except IOError:
+        filepath = open(path, 'w+')    
+
 def send_to_ntfy(url, text, authorization):
     response = requests.post(
         url,
@@ -10,6 +16,7 @@ def send_to_ntfy(url, text, authorization):
         headers={
             "Title": "Items added in the past hour",
             "Authorization": authorization,
+            "Tags": "tv",
         }
     )
     if response.status_code != 200:
@@ -19,12 +26,14 @@ def send_to_ntfy(url, text, authorization):
 
 def send_merged_to_ntfy(url, authorization):
     merged_text = ""
+    make_files('tvshows.txt')
     with open('tvshows.txt', 'r') as file:
         tvshows = file.read()
         if tvshows:
             merged_text += tvshows
         file.close()
 
+    make_files('movies.txt')
     with open('movies.txt', 'r') as file:
         movies = file.read()
         if movies:
