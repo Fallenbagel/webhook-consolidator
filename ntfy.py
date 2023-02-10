@@ -60,10 +60,10 @@ if __name__ == "__main__":
     # Schedule the send_merged_to_ntfy function
     if schedule_unit == 's':
         schedule.every(schedule_number).seconds.do(send_merged_to_ntfy, args.url, args.authorization)
-    elif schedule_unit == 'h':
-        schedule.every(schedule_number).hours.do(send_merged_to_ntfy, args.url, args.authorization)
     elif schedule_unit == 'm':
         schedule.every(schedule_number).minutes.do(send_merged_to_ntfy, args.url, args.authorization)
+    elif schedule_unit == 'h':
+        schedule.every(schedule_number).hours.do(send_merged_to_ntfy, args.url, args.authorization)
     else:
         raise Exception('Invalid schedule unit, should be either "s" for seconds, "m" for minutes, or "h" for hours')
 
