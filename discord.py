@@ -75,7 +75,7 @@ if __name__ == "__main__":
     schedule_number = int(args.schedule[:-1])
     schedule_unit = args.schedule[-1:]
 
-    # Schedule the send_merged_to_ntfy function
+    # Schedule the send_merged_to_discord function
     if schedule_unit == 's':
         schedule.every(schedule_number).seconds.do(send_merged_to_ntfy, args.url, args.authorization)
     elif schedule_unit == 'm':
