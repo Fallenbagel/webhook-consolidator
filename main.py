@@ -72,5 +72,5 @@ if __name__ == "__main__":
         port=5000
     else:
         port=args.port
-    print("Server will run on all interfaces on port:" + port + " at location /webhook")
+    print("Server will run on all interfaces on port:", port, " at location /webhook")
     serve(app, host='0.0.0.0', port=port)
