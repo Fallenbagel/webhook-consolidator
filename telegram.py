@@ -1,7 +1,4 @@
-import requests
-import schedule
-import time
-import argparse
+import requests, schedule, time, argparse
 
 def make_files(path):
     try:
