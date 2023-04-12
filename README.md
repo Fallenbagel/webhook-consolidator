@@ -1,4 +1,6 @@
 # Webhook-Consolidator
+## This project is being rewritten to use postgres, poster images and a notification system that is more like Overseerr/jellyseerr. This would mean that the current method will be archived as a different branch and this project will continue as non-[newsletter](https://github.com/Cloud9Developer/Jellyfin-Newsletter-Plugin) type notifications.  
+
 This is a python script that acts as a middle man to consolidate/accumulate & merge and sort notifications sent by the jellyfin-webhook-plugin so that all of them are sent as a single message after accumulating for a set period of time. It also truncates the added episodes depending on the seasons starting from the lowest episode to highest. As for movie notifications, it sends the overview with it. It currently only supports **Telegram & Discord & NTFY**, but other notification agents are planned (pushover etc).
 
 ### Preview
